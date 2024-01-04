@@ -1,5 +1,10 @@
 // Uncomment this block to pass the first stage
-use std::{io::Write, net::TcpListener};
+use std::io::prelude::*;
+use std::net::{TcpListener, TcpStream};
+
+fn handle_connection(stream: &mut TcpStream) {
+    let _ = stream.write_all(b"+PONG\r\n");
+}
 
 fn main() {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -13,7 +18,7 @@ fn main() {
         match stream {
             Ok(mut stream) => {
                 println!("accepted new connection");
-                let _ = stream.write(b"+PONG\r\n");
+                handle_connection(&mut stream)
             }
             Err(e) => {
                 println!("error: {}", e);
