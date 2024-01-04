@@ -2,11 +2,13 @@
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 
+use anyhow::Result;
+
 fn handle_connection(stream: &mut TcpStream) {
     let _ = stream.write_all(b"+PONG\r\n");
 }
 
-fn main() {
+fn main() -> Result<()> {
     // You can use print statements as follows for debugging, they'll be visible when running tests.
     println!("Logs from your program will appear here!");
 
@@ -25,4 +27,6 @@ fn main() {
             }
         }
     }
+
+    Ok(())
 }
