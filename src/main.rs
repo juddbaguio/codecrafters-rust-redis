@@ -19,15 +19,14 @@ fn main() -> Result<()> {
     let listener = TcpListener::bind("127.0.0.1:6379").unwrap();
 
     loop {
-        for stream in listener.incoming() {
-            match stream {
-                Ok(mut stream) => {
-                    println!("accepted new connection");
-                    handle_connection(&mut stream)?
-                }
-                Err(e) => {
-                    println!("error: {}", e);
-                }
+        match listener.accept() {
+            Ok((mut socket, _)) => {
+                println!("accepted new connection");
+
+                handle_connection(&mut socket)?
+            }
+            Err(e) => {
+                println!("error: {}", e);
             }
         }
     }
