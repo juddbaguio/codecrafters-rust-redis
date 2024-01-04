@@ -5,8 +5,23 @@ use std::net::{TcpListener, TcpStream};
 use anyhow::Result;
 
 fn handle_connection(stream: &mut TcpStream) -> Result<()> {
-    stream.write_all(b"+PONG\r\n")?;
-    stream.flush()?;
+    loop {
+        let mut buffer = [0; 1024];
+        match stream.read(&mut buffer) {
+            Ok(_size) => {
+                let buf_res = b"+PONG\r\n";
+
+                stream.write_all(buf_res)?;
+                stream.flush()?;
+                stream.write_all(buf_res)?;
+                stream.flush()?;
+            }
+            Err(err) => {
+                println!("error: {}", err);
+                break;
+            }
+        }
+    }
 
     Ok(())
 }
