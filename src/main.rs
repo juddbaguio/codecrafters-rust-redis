@@ -13,6 +13,7 @@ fn handle_connection(stream: &mut TcpStream) -> Result<()> {
 
                 stream.write_all(buf_res)?;
                 stream.flush()?;
+
                 stream.write_all(buf_res)?;
                 stream.flush()?;
             }
