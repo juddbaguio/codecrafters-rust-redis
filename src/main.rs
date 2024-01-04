@@ -4,8 +4,10 @@ use std::net::{TcpListener, TcpStream};
 
 use anyhow::Result;
 
-fn handle_connection(stream: &mut TcpStream) {
-    let _ = stream.write_all(b"+PONG\r\n");
+fn handle_connection(stream: &mut TcpStream) -> Result<()> {
+    stream.write_all(b"+PONG\r\n")?;
+
+    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -16,17 +18,17 @@ fn main() -> Result<()> {
 
     let listener = TcpListener::bind("127.0.0.1:6379").unwrap();
 
-    for stream in listener.incoming() {
-        match stream {
-            Ok(mut stream) => {
-                println!("accepted new connection");
-                handle_connection(&mut stream)
-            }
-            Err(e) => {
-                println!("error: {}", e);
+    loop {
+        for stream in listener.incoming() {
+            match stream {
+                Ok(mut stream) => {
+                    println!("accepted new connection");
+                    handle_connection(&mut stream)?
+                }
+                Err(e) => {
+                    println!("error: {}", e);
+                }
             }
         }
     }
-
-    Ok(())
 }
