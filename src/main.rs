@@ -6,6 +6,7 @@ use anyhow::Result;
 
 fn handle_connection(stream: &mut TcpStream) -> Result<()> {
     stream.write_all(b"+PONG\r\n")?;
+    stream.flush()?;
 
     Ok(())
 }
