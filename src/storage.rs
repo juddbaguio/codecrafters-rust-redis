@@ -43,6 +43,8 @@ impl KVStore {
                 }
                 let key = &arg[1];
 
+                println!("GET - {:?}", arg);
+
                 if let Some(val) = storage.get(key) {
                     if let Some(exp) = val.expiry {
                         let current_date_time = Utc::now();
@@ -64,6 +66,8 @@ impl KVStore {
                 if arg.len() < 4 {
                     bail!("wrong SET payload");
                 }
+
+                println!("SET - {:?}", arg);
 
                 let expiry_arg = if arg.len() == 8 {
                     let cloned_dur_str = arg[7].clone();
