@@ -52,7 +52,7 @@ impl KVStore {
             Command::Set => {
                 let mut storage = self.storage.lock().unwrap();
                 let arg = cmd.payload.unwrap();
-                if arg.len() != 4 {
+                if arg.len() < 4 {
                     bail!("wrong SET payload");
                 }
                 let key = &arg[1];
