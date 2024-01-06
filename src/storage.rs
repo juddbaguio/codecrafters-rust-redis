@@ -1,9 +1,11 @@
 use anyhow::{bail, Ok, Result};
 use std::{
     collections::HashMap,
+    ops::Add,
     sync::{Arc, Mutex},
 };
-// use tokio::sync::Mutex;
+
+use chrono::{DateTime, Duration, Utc};
 
 use crate::command_parser::{Command, Payload};
 
@@ -11,7 +13,7 @@ use crate::command_parser::{Command, Payload};
 #[derive(Default)]
 pub struct Value {
     content: Option<String>,
-    expiry: Option<String>,
+    expiry: Option<DateTime<Utc>>,
 }
 
 #[derive(Default)]
@@ -42,8 +44,14 @@ impl KVStore {
                 let key = &arg[1];
 
                 if let Some(val) = storage.get(key) {
+                    if let Some(exp) = val.expiry {
+                        let current_date_time = Utc::now();
+                        if current_date_time.gt(&exp) {
+                            return Ok(String::from("_\r\n"));
+                        }
+                    }
+
                     if let Some(val) = &val.content {
-                        println!("{}", val.clone());
                         return Ok(val.clone());
                     }
                 }
@@ -56,12 +64,29 @@ impl KVStore {
                 if arg.len() < 4 {
                     bail!("wrong SET payload");
                 }
+
+                let expiry_arg = if arg.len() == 8 {
+                    let cloned_dur_str = arg[7].clone();
+                    let mut duration_chars = cloned_dur_str.as_str().chars();
+                    duration_chars.next();
+
+                    let duration_int = duration_chars.as_str().parse::<i64>()?;
+                    let current_date_time = Utc::now();
+                    match arg[5].to_uppercase().as_str() {
+                        "PX" => Some(current_date_time.add(Duration::milliseconds(duration_int))),
+                        "EX" => Some(current_date_time.add(Duration::seconds(duration_int))),
+                        _ => None,
+                    }
+                } else {
+                    None
+                };
+
                 let key = &arg[1];
                 let mut serialized_value = arg[2..=3].join("\r\n");
                 serialized_value.push_str("\r\n");
                 let val = Value {
                     content: Some(serialized_value),
-                    ..Default::default()
+                    expiry: expiry_arg,
                 };
 
                 storage.insert(key.clone(), val);
