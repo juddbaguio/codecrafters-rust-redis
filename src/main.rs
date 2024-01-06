@@ -18,7 +18,7 @@ async fn handle_connection(stream: &mut TcpStream, kv_store: Arc<KVStore>) -> Re
             Ok(_size) => {
                 let stream_payload = String::from_utf8(buffer.to_vec())?;
                 let payload = command_parser::Command::parse(stream_payload)?;
-                println!("{:?}", payload.payload);
+                println!("{:#?}", payload.payload);
                 let resp = kv_store.build_response(payload)?;
 
                 stream.write_all(resp.as_bytes()).await?;

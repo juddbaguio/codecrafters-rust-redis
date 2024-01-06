@@ -2,7 +2,7 @@
 
 use anyhow::{bail, Ok, Result};
 
-#[allow(unused)]
+#[derive(Debug)]
 pub enum Command {
     Ping,
     Echo,
@@ -10,7 +10,7 @@ pub enum Command {
     Set,
 }
 
-#[allow(unused)]
+#[derive(Debug)]
 pub struct Payload {
     pub action: Command,
     pub payload: Option<Vec<String>>,
