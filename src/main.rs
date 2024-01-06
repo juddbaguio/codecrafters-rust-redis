@@ -4,14 +4,20 @@ use tokio::net::{TcpListener, TcpStream};
 
 use anyhow::Result;
 
+mod command_parser;
+
 async fn handle_connection(stream: &mut TcpStream) -> Result<()> {
     loop {
         let mut buffer = [0; 1024];
         match stream.read(&mut buffer).await {
             Ok(_size) => {
-                let buf_res = b"+PONG\r\n";
+                let stream_payload = String::from_utf8(buffer.to_vec())?;
+                println!("{:?}", stream_payload);
+                let mut buf_res = command_parser::Command::parse(stream_payload)?;
 
-                stream.write_all(buf_res).await?;
+                stream
+                    .write_all(buf_res.build_response()?.as_bytes())
+                    .await?;
                 stream.flush().await?;
             }
             Err(err) => {
