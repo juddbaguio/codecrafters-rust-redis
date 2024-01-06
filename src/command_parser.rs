@@ -24,6 +24,7 @@ impl Command {
             .split("\r\n")
             .map(String::from)
             .collect::<Vec<String>>();
+        splitted_payload.pop();
 
         let mut command: Option<Command> = None;
 
