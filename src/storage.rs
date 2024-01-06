@@ -88,6 +88,8 @@ impl KVStore {
                 let key = &arg[1];
                 let mut serialized_value = arg[2..=3].join("\r\n");
                 serialized_value.push_str("\r\n");
+
+                println!("pushed - {:?}", serialized_value);
                 let val = Value {
                     content: Some(serialized_value),
                     expiry: expiry_arg,
