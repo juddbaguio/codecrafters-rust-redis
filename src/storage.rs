@@ -38,7 +38,7 @@ impl KVStore {
             Command::Get => {
                 let storage = self.storage.lock().unwrap();
                 let arg = cmd.payload.unwrap();
-                if arg.len() < 3 {
+                if arg.len() < 2 {
                     bail!("wrong GET Payload");
                 }
                 let key = &arg[1];
