@@ -43,6 +43,7 @@ impl KVStore {
 
                 if let Some(val) = storage.get(key) {
                     if let Some(val) = &val.content {
+                        println!("{}", val.clone());
                         return Ok(val.clone());
                     }
                 }
