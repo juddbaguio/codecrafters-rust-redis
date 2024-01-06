@@ -1,6 +1,6 @@
 // use anyhow::Result;
 
-use anyhow::{bail, ensure, Ok, Result};
+use anyhow::{bail, Ok, Result};
 
 #[allow(unused)]
 pub enum Command {
@@ -28,7 +28,7 @@ impl Command {
         let mut command: Option<Command> = None;
 
         while !splitted_payload.is_empty() {
-            match splitted_payload.remove(0).as_str() {
+            match splitted_payload.remove(0).as_str().to_uppercase().as_str() {
                 "ECHO" => {
                     command = Some(Command::Echo);
                     break;

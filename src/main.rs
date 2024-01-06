@@ -12,7 +12,7 @@ async fn handle_connection(stream: &mut TcpStream) -> Result<()> {
         match stream.read(&mut buffer).await {
             Ok(_size) => {
                 let stream_payload = String::from_utf8(buffer.to_vec())?;
-                println!("{:?}", stream_payload);
+                println!("wow - {:?}", stream_payload);
                 let mut buf_res = command_parser::Command::parse(stream_payload)?;
 
                 stream
