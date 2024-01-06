@@ -49,7 +49,7 @@ impl KVStore {
                     if let Some(exp) = val.expiry {
                         let current_date_time = Utc::now();
                         if current_date_time.gt(&exp) {
-                            return Ok(String::from("+_\r\n"));
+                            return Ok(String::from("$-1\r\n"));
                         }
                     }
 
@@ -58,7 +58,7 @@ impl KVStore {
                     }
                 }
 
-                Ok(String::from("+_\r\n"))
+                Ok(String::from("$-1\r\n"))
             }
             Command::Set => {
                 let mut storage = self.storage.lock().unwrap();
