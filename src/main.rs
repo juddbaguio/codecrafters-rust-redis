@@ -1,22 +1,28 @@
+use std::sync::Arc;
+
 // Uncomment this block to pass the first stage
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::{TcpListener, TcpStream};
 
 use anyhow::Result;
 
-mod command_parser;
+use crate::storage::KVStore;
 
-async fn handle_connection(stream: &mut TcpStream) -> Result<()> {
+mod command_parser;
+mod storage;
+
+async fn handle_connection(stream: &mut TcpStream, kv_store: Arc<KVStore>) -> Result<()> {
     loop {
         let mut buffer = [0; 1024];
         match stream.read(&mut buffer).await {
             Ok(_size) => {
                 let stream_payload = String::from_utf8(buffer.to_vec())?;
-                let mut buf_res = command_parser::Command::parse(stream_payload)?;
+                let payload = command_parser::Command::parse(stream_payload)?;
+                let resp = kv_store.build_response(payload)?;
 
-                stream
-                    .write_all(buf_res.build_response()?.as_bytes())
-                    .await?;
+                println!("{:?}", resp);
+
+                stream.write_all(resp.as_bytes()).await?;
                 stream.flush().await?;
             }
             Err(err) => {
@@ -37,9 +43,11 @@ async fn main() -> Result<()> {
     // Uncomment this block to pass the first stage
 
     let listener = TcpListener::bind("127.0.0.1:6379").await?;
+    let kv_store = Arc::new(KVStore::new());
 
     loop {
         let (mut socket, _) = listener.accept().await?;
-        tokio::spawn(async move { handle_connection(&mut socket).await });
+        let cloned_store = Arc::clone(&kv_store);
+        tokio::spawn(async move { handle_connection(&mut socket, cloned_store).await });
     }
 }

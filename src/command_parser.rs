@@ -12,8 +12,8 @@ pub enum Command {
 
 #[allow(unused)]
 pub struct Payload {
-    action: Command,
-    payload: Option<Vec<String>>,
+    pub action: Command,
+    pub payload: Option<Vec<String>>,
 }
 
 #[allow(unused)]
@@ -60,25 +60,25 @@ impl Command {
     }
 }
 
-impl Payload {
-    pub fn build_response(&mut self) -> Result<String> {
-        match self.action {
-            Command::Ping => return Ok(String::from("+PONG\r\n")),
-            Command::Echo => {
-                let cloned_payload = self.payload.clone();
-                let mut joined_resp = cloned_payload.unwrap().join("\r\n");
-                joined_resp.push_str("\r\n");
+// impl Payload {
+//     pub fn build_response(&mut self) -> Result<String> {
+//         match self.action {
+//             Command::Ping => return Ok(String::from("+PONG\r\n")),
+//             Command::Echo => {
+//                 let cloned_payload = self.payload.clone();
+//                 let mut joined_resp = cloned_payload.unwrap().join("\r\n");
+//                 joined_resp.push_str("\r\n");
 
-                return Ok(joined_resp);
-            }
-            Command::Get => {
-                // return Ok(String::from(""));
-            }
-            Command::Set => {
-                // return Ok(String::from(""));
-            }
-        }
+//                 return Ok(joined_resp);
+//             }
+//             Command::Get => {
+//                 // return Ok(String::from(""));
+//             }
+//             Command::Set => {
+//                 // return Ok(String::from(""));
+//             }
+//         }
 
-        bail!("Wrong command")
-    }
-}
+//         bail!("Wrong command")
+//     }
+// }
