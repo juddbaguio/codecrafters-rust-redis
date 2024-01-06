@@ -57,8 +57,10 @@ impl KVStore {
                     bail!("wrong SET payload");
                 }
                 let key = &arg[1];
+                let mut serialized_value = arg[2..=3].join("\r\n");
+                serialized_value.push_str("\r\n");
                 let val = Value {
-                    content: Some(arg[3].clone()),
+                    content: Some(serialized_value),
                     ..Default::default()
                 };
 
